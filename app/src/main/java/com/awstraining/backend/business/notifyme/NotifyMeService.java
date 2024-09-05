@@ -15,9 +15,12 @@ public class NotifyMeService {
 
     private final MessageSender sender;
 
+    private final Translator translator;
+
     @Autowired
-    public NotifyMeService(MessageSender sender) {
+    public NotifyMeService(Translator translator, MessageSender sender) {
         this.sender = sender;
+        this.translator = translator;
     }
     
     public String notifyMe(NotifyMeDO notifyMe) {
@@ -25,16 +28,16 @@ public class NotifyMeService {
         // TODO: lab1
         //  1. Send text using sender.
         //  2. Return sent message.
-
-        this.sender.send(notifyMe.text());
-
         // TODO: lab2
         //  1. Translate text from using translator.
         //  2. Change sending of text to "translated text" and return it.
         // TODO: lab3
         //  1. Detect sentiment of translated message.
         //  2. Change sending of text to "setiment: translated text" and return it.
-        return notifyMe.text();
+
+        final String translated = this.translator.translate(notifyMe);
+        this.sender.send(translated);
+        return translated;
     }
     
 }
