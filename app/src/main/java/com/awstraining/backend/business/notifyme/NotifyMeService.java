@@ -17,10 +17,13 @@ public class NotifyMeService {
 
     private final Translator translator;
 
+    private final Sentiment sentiment;
+
     @Autowired
-    public NotifyMeService(Translator translator, MessageSender sender) {
+    public NotifyMeService(Translator translator, MessageSender sender, Sentiment sentiment) {
         this.sender = sender;
         this.translator = translator;
+        this.sentiment = sentiment;
     }
     
     public String notifyMe(NotifyMeDO notifyMe) {
@@ -36,8 +39,10 @@ public class NotifyMeService {
         //  2. Change sending of text to "setiment: translated text" and return it.
 
         final String translated = this.translator.translate(notifyMe);
-        this.sender.send(translated);
-        return translated;
+        final String detectedSentiment = this.sentiment.detectSentiment(notifyMe.targetLc(), translated);
+        final String translatedWithDetectedSentiment = detectedSentiment + ": " + translated;
+        this.sender.send(translatedWithDetectedSentiment);
+        return translatedWithDetectedSentiment;
     }
     
 }
